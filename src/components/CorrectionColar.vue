@@ -158,8 +158,22 @@ export default defineComponent({
         options: {
           animation: false,
           scales: {
+            x: {
+                type: "linear",
+                position: "bottom",
+                min: 0,
+                max: 260,
+                ticks: {
+                    stepSize: 15,
+                },
+            },
             y: {
-              beginAtZero: true,
+                beginAtZero: true,
+                min: 0,
+                max: 260,
+                ticks: {
+                    stepSize: 15,
+                },
             },
           },
         },
@@ -216,11 +230,20 @@ export default defineComponent({
     },
     update(label, event) {
       const num = +event.target.value;
-      const max = label.includes('x') ? 255 : 255; // assuming both x and y have a range of 0-255
+      const max = 255;
+      const min = 0;
 
-      if (!isNaN(num) && num >= 0 && num <= max) {
-        this.values[label] = num;
-        this.buildGraph();
+      if (!isNaN(num) && num >= min && num <= max) {
+        if (label === 'x1' && num > this.values.x2) {
+          alert('x1 не может быть больше x2');
+          event.target.value = this.values[label];
+        } else if (label === 'x2' && num < this.values.x1) {
+          alert('x2 не может быть меньше x1');
+          event.target.value = this.values[label];
+        } else {
+          this.values[label] = num;
+          this.buildGraph();
+        }
       } else {
         event.target.value = this.values[label]; // reset input to valid value
       }

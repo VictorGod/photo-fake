@@ -2,7 +2,7 @@
   <div :class="{ 'status-bar': true, 'pipette-mode': state === 'pipette' && pickedColor }">
     <div class="left-side">
       <span v-if="state"> St: {{ state }}</span>
-      <span v-if="imageWidth && imageHeight"> | W: {{ imageWidth }} | H: {{ imageHeight }}</span>
+      <span v-if="imageWidth && imageHeight"> | W: {{ formattedImageWidth }} | H: {{ formattedImageHeight }}</span>
       <span v-if="state === 'pipette' && pickedColor"> | C: {{ pickedColor }}</span>
       <div v-if="state === 'pipette' && pickedColor" class="pipette-color" :style="{ background: pickedColor }"></div>
       <span v-if="state === 'pipette' && pickedColor && xMouse && yMouse"> | Coords: {{ xMouse }}:{{ yMouse }}</span>
@@ -40,6 +40,14 @@ export default defineComponent({
     yMouse: Number,
     scale: Number,
   },
+  computed: {
+    formattedImageWidth() {
+      return Math.floor(this.imageWidth);
+    },
+    formattedImageHeight() {
+      return Math.floor(this.imageHeight);
+    }
+  },
   methods: {
     updateScale(event) {
       const newScale = +event.target.value;
@@ -54,7 +62,7 @@ export default defineComponent({
   position: absolute;
   border: 1px solid #ddd;
   border-radius: 10px;
-  padding:15px;
+  padding: 15px;
   bottom: 0;
   justify-content: space-between;
   align-items: center;

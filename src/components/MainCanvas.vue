@@ -9,6 +9,8 @@
     @mouseup="onMouseUp"
     @wheel="onMouseWheel"
     tabindex="0"
+    width="1600"
+    height="600"
   ></canvas>
   <CorrectionColar
     v-show="isShowCorrection"

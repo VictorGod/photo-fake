@@ -49,7 +49,7 @@
           <label for="width" class="type" :style="{ right: '3px' }">
             {{ resizeUnit === "pixels" ? "px" : "%" }}
           </label>
-          <input id="width" :value="newiw" @change="updateNewiw" />
+          <input id="width" :value="Math.floor(newiw)" @change="updateNewiw" />
         </div>
         <div class="custom-checkbox">
           <input type="checkbox" v-model="bind" />
@@ -71,7 +71,7 @@
           <label for="height" class="type" :style="{ right: '3px' }">
             {{ resizeUnit === "pixels" ? "px" : "%" }}
           </label>
-          <input id="height" :value="newih" @change="updateNewih" />
+          <input id="height" :value="Math.floor(newih)" @change="updateNewih" />
         </div>
       </div>
       <div class="interpolation">
@@ -203,32 +203,46 @@ export default defineComponent({
       this.$emit("changeState", "");
     },
     updateModal() {
-      if (this.resizeUnit === "pixels") {
-        if (this.newiw === null) {
-          this.newiw = this.iw;
-          if (this.canvasRef.width < this.iw) {
-            this.newiw = this.canvasRef.width;
-          }
-        }
-
-        if (this.newih === null) {
-          this.newih = this.ih;
-          if (this.canvasRef.height < this.ih) {
-            this.newih = this.canvasRef.height;
-          }
-        }
+  if (this.resizeUnit === "pixels") {
+    // Определить ширину и высоту изображения как актуальные значения
+    if (this.newiw === null) {
+      this.newiw = this.iw;
+      if (this.canvasRef.width < this.iw) {
+        this.newiw = this.canvasRef.width;
       }
-      if (this.resizeUnit === "percentage") {
-        const { width, height } = this.canvasRef;
-        const widthPercent = width / 100;
-        const heightPercent = height / 100;
+    }
 
-        if (this.newiw == null) {
-          this.newiw = ~~(this.iw / widthPercent);
-          this.newih = ~~(this.ih / heightPercent);
-        }
+    if (this.newih === null) {
+      this.newih = this.ih;
+      if (this.canvasRef.height < this.ih) {
+        this.newih = this.canvasRef.height;
       }
-    },
+    }
+  }
+
+  if (this.resizeUnit === "percentage") {
+    const { width, height } = this.canvasRef;
+    const widthPercent = width / 100;
+    const heightPercent = height / 100;
+
+    // Сохранить текущие значения пикселей перед переключением на проценты
+    if (this.previousWidthPixels === null && this.previousHeightPixels === null) {
+      this.previousWidthPixels = this.iw;
+      this.previousHeightPixels = this.ih;
+    }
+
+    // Установить ширину и высоту на 100%, если переключились на проценты
+    if (this.newiw !== 100 && this.newih !== 100) {
+      this.newiw = 100;
+      this.newih = 100;
+    }
+
+    if (this.newiw == null) {
+      this.newiw = ~~(this.iw / widthPercent);
+      this.newih = ~~(this.ih / heightPercent);
+    }
+  }
+},
     updateNewiw(event) {
       const num = +event.target.value;
 
